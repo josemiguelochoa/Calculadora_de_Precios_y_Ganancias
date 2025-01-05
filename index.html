@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Precios y Ganancias</title>
+    <link rel="stylesheet" href="styles.css">
+    <meta name="theme-color" content="#3498db">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Precios y Ganancias</h1>
+        
+        <div class="calculator-section">
+            <div class="input-group">
+                <label for="costoMP">Costo de Materia Prima ($):</label>
+                <input type="number" id="costoMP" step="0.01" min="0">
+            </div>
+
+            <div class="input-group">
+                <label for="margen">Margen de Ganancia (%):</label>
+                <input type="number" id="margen" step="0.1" min="0">
+            </div>
+
+            <div class="input-group">
+                <label for="impuestos">Impuestos (%):</label>
+                <input type="number" id="impuestos" step="0.1" min="0">
+            </div>
+
+            <button id="calcularPrecio" class="btn-primary">Calcular Precio</button>
+
+            <div class="results" id="resultadosPrecio">
+                <h3>📊 Resultados del Cálculo</h3>
+                <p>Precio Final: <span id="precioFinal">-</span></p>
+                <p>Precio Sin Impuestos: <span id="precioSinImpuestos">-</span></p>
+            </div>
+
+            <div class="ventas-section">
+                <div class="input-group">
+                    <label for="cantidadVentas">Ventas Esperadas:</label>
+                    <input type="number" id="cantidadVentas" min="0">
+                </div>
+
+                <button id="calcularGanancia" class="btn-secondary">Calcular Ganancia</button>
+
+                <div class="results" id="resultadosGanancia">
+                    <h3>💰 Análisis de Ganancias</h3>
+                    <p>Margen de Ganancia Real: <span id="margenReal">-</span></p>
+                    <p>Ganancia Total Esperada: <span id="gananciaTotal">-</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="proyecto.js"></script>
+    <script>
+        document.getElementById('calcularPrecio').addEventListener('click', () => {
+            const costoMP = parseFloat(document.getElementById('costoMP').value);
+            const margen = parseFloat(document.getElementById('margen').value);
+            const impuestos = parseFloat(document.getElementById('impuestos').value);
+
+            if (!costoMP || !margen || !impuestos) {
+                alert('Por favor, complete todos los campos');
+                return;
+            }
+
+            const {precioFinal, precioSinImpuestos} = calcularPrecioFinal(costoMP, margen, impuestos);
+            
+            document.getElementById('precioFinal').textContent = `$${precioFinal.toFixed(2)}`;
+            document.getElementById('precioSinImpuestos').textContent = `$${precioSinImpuestos.toFixed(2)}`;
+        });
+
+        document.getElementById('calcularGanancia').addEventListener('click', () => {
+            const costoMP = parseFloat(document.getElementById('costoMP').value);
+            const precioFinal = parseFloat(document.getElementById('precioFinal').textContent.slice(1));
+            const precioSinImpuestos = parseFloat(document.getElementById('precioSinImpuestos').textContent.slice(1));
+            const cantidadVentas = parseInt(document.getElementById('cantidadVentas').value);
+
+            if (!cantidadVentas) {
+                alert('Por favor, ingrese la cantidad de ventas esperadas');
+                return;
+            }
+
+            const {gananciaTotal, margenGananciaReal} = calcularGananciaEsperada(
+                precioFinal, 
+                precioSinImpuestos,
+                costoMP, 
+                cantidadVentas
+            );
+
+            document.getElementById('margenReal').textContent = `${margenGananciaReal.toFixed(2)}%`;
+            document.getElementById('gananciaTotal').textContent = `$${gananciaTotal.toFixed(2)}`;
+        });
+    </script>
+</body>
+</html> 
